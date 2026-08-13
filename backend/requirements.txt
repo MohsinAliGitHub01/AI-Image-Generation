@@ -1,8 +1,8 @@
 fastapi
 uvicorn
 sqlmodel
-passlib[bycrypt]==1.7.4
-bycrypt==4.0.1
+passlib[bcrypt]==1.7.4
+bcrypt==4.0.1
 httpx
 pydantic
 python-jose[cryptography]
