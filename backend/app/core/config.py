@@ -6,7 +6,7 @@ class Settings(BaseSettings):
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
-    STABILITY_API_KEY: str = "sk-fPVyfmx51ljuz6IbzN3xrat2rBiOyDAozqwuaaIxbzeLJirP"
+    STABILITY_API_KEY: str = "sk-fdtl1z06t4eqWUHFCh3X1dOJIJDmFFot7xaFYfLm9zn3r6aW"
     STABILITY_API_URL: str = "https://api.stability.ai/v2beta/stable-image/generate/core"
 
     class Config:
