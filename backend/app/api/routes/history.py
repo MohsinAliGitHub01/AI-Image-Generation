@@ -22,7 +22,4 @@ def get_history(
     if search:
         query = query.filter(ImageGeneration.prompt.ilike(f"%{search}%"))
 
-    return {
-        query.order_by(ImageGeneration.created_at.desc()).
-        offset(skip).limit(limit).all()
-    }
+    return query.order_by(ImageGeneration.created_at.desc()).offset(skip).limit(limit).all()
