@@ -1,13 +1,15 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = "postgresql://postgres:qwe123@localhost:5432/ai_image_platform"
-    JWT_SECRET_KEY: str = "your_secret_key"
+    DATABASE_URL: str = ""
+    JWT_SECRET_KEY: str = ""
     JWT_ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
 
-    STABILITY_API_KEY: str = "sk-fdtl1z06t4eqWUHFCh3X1dOJIJDmFFot7xaFYfLm9zn3r6aW"
-    STABILITY_API_URL: str = "https://api.stability.ai/v2beta/stable-image/generate/core"
+    STABILITY_API_KEY: str = ""
+    STABILITY_API_URL: str = ""
+
+    HUGGINGFACE_API_KEY: str = ""
 
     class Config:
         env_file = ".env"
