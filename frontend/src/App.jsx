@@ -139,7 +139,7 @@ function MainApp({ token }) {
     const title = window.prompt("New session title:");
     if (!title) return;
     await fetch(`${API}/api/sessions/${id}`, {
-      method: "PATCH",
+      method: "PUT",
       headers: authHeaders(token),
       body: JSON.stringify({ title }),
     });
