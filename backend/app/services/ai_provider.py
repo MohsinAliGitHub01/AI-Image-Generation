@@ -1,18 +1,18 @@
-# backend/app/services/ai_provider.py
-
+import asyncio
+import io
 import uuid
 import os
 
 import httpx
 from fastapi import HTTPException
+from huggingface_hub import InferenceClient
 
 from app.core.config import settings
 
 GENERATED_DIR = "generated_images"
 os.makedirs(GENERATED_DIR, exist_ok=True)
 
-HUGGINGFACE_MODEL = "stabilityai/stable-diffusion-xl-base-1.0"
-HUGGINGFACE_API_URL = f"https://router.huggingface.co/hf-inference/models/{HUGGINGFACE_MODEL}"
+HUGGINGFACE_MODEL = "black-forest-labs/FLUX.1-schnell"
 
 
 def _save_image(image_bytes: bytes) -> str:
@@ -48,28 +48,29 @@ async def _generate_via_stability(prompt: str) -> str:
     return _save_image(response.content)
 
 
+def _huggingface_generate_sync(prompt: str) -> bytes:
+    """
+    Runs synchronously (huggingface_hub's InferenceClient is sync).
+    Called via asyncio.to_thread so it doesn't block the event loop.
+    The client auto-selects a working provider for this model.
+    """
+    client = InferenceClient(provider="together", api_key=settings.HUGGINGFACE_API_KEY)
+    image = client.text_to_image(prompt, model=HUGGINGFACE_MODEL)  # returns a PIL.Image
+    buf = io.BytesIO()
+    image.save(buf, format="PNG")
+    return buf.getvalue()
+
+
 async def _generate_via_huggingface(prompt: str) -> str:
     if not settings.HUGGINGFACE_API_KEY:
         raise RuntimeError("HUGGINGFACE_API_KEY is not configured")
 
-    headers = {
-        "Authorization": f"Bearer {settings.HUGGINGFACE_API_KEY}",
-    }
-    payload = {"inputs": prompt}
+    try:
+        image_bytes = await asyncio.to_thread(_huggingface_generate_sync, prompt)
+    except Exception as e:
+        raise RuntimeError(f"Hugging Face error: {e}")
 
-    async with httpx.AsyncClient(timeout=60.0) as client:
-        response = await client.post(
-            HUGGINGFACE_API_URL,
-            headers=headers,
-            json=payload,
-        )
-
-    # HF returns JSON (not an image) when the model is loading or errors out.
-    content_type = response.headers.get("content-type", "")
-    if response.status_code != 200 or "image" not in content_type:
-        raise RuntimeError(f"Hugging Face error ({response.status_code}): {response.text}")
-
-    return _save_image(response.content)
+    return _save_image(image_bytes)
 
 
 async def generate_image(prompt: str) -> str:

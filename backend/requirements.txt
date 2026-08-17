@@ -11,3 +11,5 @@ python-multipart
 psycopg2-binary
 sqlalchemy
 pydantic[email]
+huggingface_hub==0.29.3
+Pillow==10.4.0
