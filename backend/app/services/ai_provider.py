@@ -12,7 +12,7 @@ GENERATED_DIR = "generated_images"
 os.makedirs(GENERATED_DIR, exist_ok=True)
 
 HUGGINGFACE_MODEL = "stabilityai/stable-diffusion-xl-base-1.0"
-HUGGINGFACE_API_URL = f"https://api-inference.huggingface.co/models/{HUGGINGFACE_MODEL}"
+HUGGINGFACE_API_URL = f"https://router.huggingface.co/hf-inference/models/{HUGGINGFACE_MODEL}"
 
 
 def _save_image(image_bytes: bytes) -> str:
